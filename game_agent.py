@@ -41,7 +41,7 @@ def custom_score(game, player):
     if game.is_loser(player):
         return float("inf")
     
-    elif game.is_winner(player):
+    if game.is_winner(player):
         return float("inf")
 
     my_moves = len(game.get_legal_moves(player))
