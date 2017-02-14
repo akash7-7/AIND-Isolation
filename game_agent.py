@@ -37,7 +37,6 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    # TODO: finish this function!
     if game.is_loser(player):
         return float("inf")
     
@@ -128,7 +127,12 @@ class CustomPlayer:
         self.time_left = time_left
 
         # TODO: finish this function!
-
+        if not legal_moves:
+            return (-1, -1)
+        elif self.method =="alphabeta":
+            return self.algo = "alphabeta"
+        else :
+            return self.algo = "minimax"
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
