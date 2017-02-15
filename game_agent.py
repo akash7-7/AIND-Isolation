@@ -127,12 +127,10 @@ class CustomPlayer:
         self.time_left = time_left
 
         # TODO: finish this function!
+        legal_move = game.get_legal_moves()
         if not legal_moves:
             return (-1, -1)
-        if self.method=='alphabeta':
-            algorithm = self.alphabeta
-        else:
-            algorithm = self.minimax
+
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
@@ -142,14 +140,19 @@ class CustomPlayer:
             # here in order to avoid timeout. The try/except block will
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
-            pass
-
+            while True:
+                if self.method=='minimax':
+                    my_score,my_move = self.minimax(game,self.search_depth)
+                elif self.method=='alphabeta':
+                    my_score,my_move = self.alphabeta(game,self.search_depth)
+                return my_move
+            
         except Timeout:
             # Handle any actions required at timeout, if necessary
-            pass
+            my_move
 
         # Return the best move from the last completed search iteration
-        raise NotImplementedError
+        return my_move
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
@@ -184,8 +187,9 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-
-        # TODO: finish this function!
+        
+ 
+        
         raise NotImplementedError
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
