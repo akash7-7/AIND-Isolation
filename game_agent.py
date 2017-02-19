@@ -186,11 +186,28 @@ class CustomPlayer:
         #available legal moves
         moves = game.get_legal_moves()
 
-        #best scores for maximining and minimizing players:
-        if maximizing_player ==True:
-            best_score =float("-Inf")
-        else:
-            best_score = float("Inf")
+        #Implementation of min max algo
+        for move in moves:
+            next_move = game.forcast_move(move)
+            
+            #maximizing
+            if maximizing_player==True:
+                best_score = float("-Inf")
+                score,_=self.minimax(next_move,depth-1,False)
+                if score > best_score:
+                    best_score = score
+                    best_move = move
+
+            #minimizing         
+            else:
+                best_score = float("Inf")
+                score,_=self.minimax(next_move,depth-1,True)
+                if score<best_score:
+                    best_score=score
+                    best_move=move
+
+        return best_score,best_move
+
 
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
@@ -225,4 +242,38 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
+        #available legal moves:
+        moves = game.get_legal_moves()
 
+        #Implementation of Alpha beta prunning
+        #pseudo code ref: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
+        for move in moves:
+            next_move = game.forcast_move(move)
+            #max level
+            if maximizing_player==True:
+                best score = float("-Inf")
+                score,_=self.alphabeta(next_move,depth-1,alpha,beta,False)
+                if score>best_score:
+                    best_score=score
+                    best_move=move
+
+                if best_score>=beta:
+                    return best_score,best_move #prunning
+
+                if best_score>alpha:
+                    alpha=best_score
+
+            #min level
+            else:
+                score,_=self.alphabeta(next_move,depth-1,alpha,beta,True)
+                if score<best_score:
+                    best_score=score
+                    best_move=move
+
+                if best_score<=alpha:
+                    return best_score,best_move  #prunning
+
+                if best_score<beta:
+                    beta = best_score
+
+        return best_score,best_move #Final score
