@@ -40,7 +40,7 @@ def custom_score(game, player):
     my_moves = len(game.get_legal_moves(player))
     opponent = game.get_opponent(player)
     opponent_moves = len(game.get_legal_moves(opponent))
-    return float(my_moves- opponent_moves)
+    return float(my_moves- 2*opponent_moves)
 
 
 class CustomPlayer:
@@ -110,15 +110,14 @@ class CustomPlayer:
         self.time_left = time_left
 
         # TODO: finish this function!
-        legal_move = game.get_legal_moves()
-        if not legal_moves:
+        if len(legal_moves)==0:
             return (-1, -1)
 
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
 
-        #Initial move:
+        #Initial move(keeping it random amongst all legal moves):
         move = legal_moves[random.randint(0,len(legal_moves)-1)]
 
         try:
@@ -184,15 +183,25 @@ class CustomPlayer:
             return self.score(game,self),game.get_player_location(self)
 
         #available legal moves
-        moves = game.get_legal_moves()
+        legal_moves = game.get_legal_moves()
 
-        #Implementation of min max algo
-        for move in moves:
-            next_move = game.forcast_move(move)
+        #Best scores for max and min player
+        if maximizing_player:
+            best_score = float("-inf")        
+        else:
+            best_score = float("inf")
+        
+        #initialize the best_move
+        best_move = (-1, -1)
+
+        '''Implementation of min max algo
+        pseudo code: https://en.wikipedia.org/wiki/Minimax'''
+        for move in legal_moves:
+            next_move = game.forecast_move(move)
             
             #maximizing
             if maximizing_player==True:
-                best_score = float("-Inf")
+                #best_score = float("-Inf")
                 score,_=self.minimax(next_move,depth-1,False)
                 if score > best_score:
                     best_score = score
@@ -200,7 +209,7 @@ class CustomPlayer:
 
             #minimizing         
             else:
-                best_score = float("Inf")
+                #best_score = float("Inf")
                 score,_=self.minimax(next_move,depth-1,True)
                 if score<best_score:
                     best_score=score
@@ -242,16 +251,28 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-        #available legal moves:
-        moves = game.get_legal_moves()
 
-        #Implementation of Alpha beta prunning
-        #pseudo code ref: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
-        for move in moves:
-            next_move = game.forcast_move(move)
+        if depth == 0:
+            return self.score(game, self), game.get_player_location(self)
+
+        #available legal moves:
+        legal_moves = game.get_legal_moves()
+
+        #Best scores for max and min player
+        if maximizing_player:
+            best_score = float("-inf")        
+        else:
+            best_score = float("inf")
+        
+        #initialize the best_move
+        best_move = (-1, -1)
+
+        '''Implementation of Alpha beta prunning
+        pseudo code ref: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning'''
+        for move in legal_moves:
+            next_move = game.forecast_move(move)
             #max level
-            if maximizing_player==True:
-                best score = float("-Inf")
+            if maximizing_player:
                 score,_=self.alphabeta(next_move,depth-1,alpha,beta,False)
                 if score>best_score:
                     best_score=score
